@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InteractReef.Sequrity", "InteractReef.Sequrity\InteractReef.Sequrity.csproj", "{BB379B73-40E1-4750-85B5-B9EED43E9076}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Microservice", "Identity.Microservice\Identity.Microservice.csproj", "{F82A6249-5C45-4A78-ADB0-7E4087D3EA23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InteractReef.Packets", "InteractReef.Packets\InteractReef.Packets.csproj", "{FE0EFA29-50C6-4D7C-95D8-02FD9A83E17C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InteractReef.Database.Core", "InteractReef.Database\InteractReef.Database.Core.csproj", "{E2594A12-8BEE-4001-8535-8A0782DC4656}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB379B73-40E1-4750-85B5-B9EED43E9076}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB379B73-40E1-4750-85B5-B9EED43E9076}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB379B73-40E1-4750-85B5-B9EED43E9076}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB379B73-40E1-4750-85B5-B9EED43E9076}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F82A6249-5C45-4A78-ADB0-7E4087D3EA23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F82A6249-5C45-4A78-ADB0-7E4087D3EA23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F82A6249-5C45-4A78-ADB0-7E4087D3EA23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F82A6249-5C45-4A78-ADB0-7E4087D3EA23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE0EFA29-50C6-4D7C-95D8-02FD9A83E17C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE0EFA29-50C6-4D7C-95D8-02FD9A83E17C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE0EFA29-50C6-4D7C-95D8-02FD9A83E17C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE0EFA29-50C6-4D7C-95D8-02FD9A83E17C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2594A12-8BEE-4001-8535-8A0782DC4656}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2594A12-8BEE-4001-8535-8A0782DC4656}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2594A12-8BEE-4001-8535-8A0782DC4656}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2594A12-8BEE-4001-8535-8A0782DC4656}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
