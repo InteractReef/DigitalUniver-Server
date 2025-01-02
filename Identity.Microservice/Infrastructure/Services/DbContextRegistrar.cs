@@ -6,7 +6,7 @@ namespace Identity.Microservice.Infrastructure.Services
 {
 	public static class DbContextRegistrar
 	{
-		private const string ConnectionStringName = "EmployeesDB";
+		private const string ConnectionStringName = "DefaultConnection";
 
 		public static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)
 		{
