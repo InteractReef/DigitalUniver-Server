@@ -1,4 +1,4 @@
-﻿using InteractReef.Packets.User;
+﻿using InteractReef.Packets.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace Users.Microservice.Infrastructure.Database

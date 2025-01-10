@@ -1,5 +1,6 @@
 ﻿using InteractReef.Database.Core;
 using InteractReef.Packets;
+using InteractReef.Packets.Schedules;
 using Microsoft.EntityFrameworkCore;
 
 namespace Schedules.Microservice.Infrastructure.Database.Repository
@@ -25,8 +26,8 @@ namespace Schedules.Microservice.Infrastructure.Database.Repository
 		public Schedule Update(int id, Schedule entity)
 		{
 			var existingSchedule = _schedules
-				.Include(s => s.numeratorWeek)
-				.Include(s => s.denominatorWeek)
+				.Include(s => s.NumeratorWeek)
+				.Include(s => s.DenominatorWeek)
 				.FirstOrDefault(s => s.Id == id);
 
 			if (existingSchedule == null)
@@ -34,8 +35,8 @@ namespace Schedules.Microservice.Infrastructure.Database.Repository
 
 			_dbContext.Entry(existingSchedule).CurrentValues.SetValues(entity);
 
-			UpdateScheduleItems(existingSchedule.numeratorWeek, entity.numeratorWeek);
-			UpdateScheduleItems(existingSchedule.denominatorWeek, entity.denominatorWeek);
+			UpdateScheduleItems(existingSchedule.NumeratorWeek, entity.NumeratorWeek);
+			UpdateScheduleItems(existingSchedule.DenominatorWeek, entity.DenominatorWeek);
 
 			_dbContext.SaveChanges();
 			return existingSchedule;
@@ -43,8 +44,8 @@ namespace Schedules.Microservice.Infrastructure.Database.Repository
 
 		public void Delete(Schedule entity)
 		{
-			_dbContext.RemoveRange(entity.numeratorWeek);
-			_dbContext.RemoveRange(entity.denominatorWeek);
+			_dbContext.RemoveRange(entity.NumeratorWeek);
+			_dbContext.RemoveRange(entity.DenominatorWeek);
 
 			_schedules.Remove(entity);
 			_dbContext.SaveChanges();
@@ -53,15 +54,15 @@ namespace Schedules.Microservice.Infrastructure.Database.Repository
 		public virtual IQueryable<Schedule> GetAll()
 		{
 			return _schedules
-				.Include(s => s.numeratorWeek)
-				.Include(s => s.denominatorWeek);
+				.Include(s => s.NumeratorWeek)
+				.Include(s => s.DenominatorWeek);
 		}
 
 		public virtual Schedule? GetById(int id)
 		{
 			return _schedules
-				.Include(s => s.numeratorWeek)
-				.Include(s => s.denominatorWeek)
+				.Include(s => s.NumeratorWeek)
+				.Include(s => s.DenominatorWeek)
 				.FirstOrDefault(s => s.Id == id);
 		}
 

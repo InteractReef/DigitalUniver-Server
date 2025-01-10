@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\InteractReef.API.Core\InteractReef.API.Core.csproj" />
     <ProjectReference Include="..\InteractReef.Database\InteractReef.Database.Core.csproj" />
     <ProjectReference Include="..\InteractReef.Grpc\InteractReef.Grpc.csproj" />
     <ProjectReference Include="..\InteractReef.Packets\InteractReef.Packets.csproj" />

@@ -8,7 +8,7 @@ namespace InteractReef.Sequrity
 {
 	public static class JwtRegistrar
 	{
-		public static IServiceCollection AddJwt(this IServiceCollection services, IConfiguration configuration)
+		public static IServiceCollection AddJwtValidator(this IServiceCollection services, IConfiguration configuration)
 		{
 			services.AddAuthentication(cfg =>
 			{
@@ -31,6 +31,13 @@ namespace InteractReef.Sequrity
 					ClockSkew = TimeSpan.Zero
 				};
 			});
+
+			return services;
+		}
+
+		public static IServiceCollection AddJwt(this IServiceCollection services)
+		{
+			services.AddSingleton<ITokenController, TokenController>();
 
 			return services;
 		}

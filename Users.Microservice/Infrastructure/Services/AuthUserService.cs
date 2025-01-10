@@ -2,7 +2,7 @@
 using Grpc.Core;
 using InteractReef.Database.Core;
 using InteractReef.Grpc.Users;
-using InteractReef.Packets.User;
+using InteractReef.Packets.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace Users.Microservice.Infrastructure.Services

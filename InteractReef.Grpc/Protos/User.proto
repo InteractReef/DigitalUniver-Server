@@ -17,6 +17,10 @@ message GetUserResponce{
 	UserInfoModel infoModel = 1;
 }
 
+message UserContainsResponce{
+	bool contains = 1;
+}
+
 message UserInfoModel{
 	int32 id = 1;
 	string email = 2;

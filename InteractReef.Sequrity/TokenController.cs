@@ -78,7 +78,7 @@ namespace InteractReef.Sequrity
 			var claims = new List<Claim> {
 				new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
 				new Claim(ClaimTypes.Email, email),
-				new Claim(ClaimTypes.UserData, password)
+				new Claim(ClaimTypes.UserData, password),
 			};
 
 			var jwtToken = new JwtSecurityToken(

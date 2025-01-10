@@ -1,24 +1,20 @@
-using InteractReef.Sequrity;
+using Microsoft.EntityFrameworkCore;
+using InteractReef.API.Core;
+using InteractReef.Database.Core;
 using Schedules.Microservice.Infrastructure.Database;
-using Schedules.Microservice.Infrastructure.Registrars;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.ConfigureKestrel(x =>
-{
-	x.ListenLocalhost(5005, option =>
-	{
-		option.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
-	}); // Grpc
+builder.AddConfiguration(args);
+builder.ConfigurePorts();
 
-	x.ListenAnyIP(5004); // Open API
+builder.Services.AddSequrity(builder.Configuration);
+builder.Services.AddDatabase<SchedulesDbContext>(builder.Configuration, (config, option) =>
+{
+	option.UseNpgsql(config.ConnectionString);
 });
 
-var configuration = builder.Configuration;
-
-builder.Services.AddDbContext(configuration);
-builder.Services.AddJwt(configuration);
-builder.Services.AddSingleton<ITokenController, TokenController>();
+builder.Services.AddRepository();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -33,7 +29,8 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-await app.MigrateDatabaseAsync<SchedulesDbContext>();
+var context = await app.GetDbContext<SchedulesDbContext>();
+await context.Database.MigrateAsync();
 
 app.UseHttpsRedirection();
 

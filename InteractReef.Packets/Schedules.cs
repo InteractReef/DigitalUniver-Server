@@ -1,25 +1,25 @@
 ﻿using InteractReef.Database;
 
-namespace InteractReef.Packets
+namespace InteractReef.Packets.Schedules
 {
 	public class Schedule : IEntity
 	{
-		public int Id { get; }
-		public int OrgId { get; }
+		public int Id { get; set; }
+		public int OrgId { get; set; }
 
-		public List<ScheduleItem> numeratorWeek { get; }
-		public List<ScheduleItem> denominatorWeek { get; }
+		public required List<ScheduleItem> NumeratorWeek { get; set; }
+		public required List<ScheduleItem> DenominatorWeek { get; set; }
 	}
 
 	public class  ScheduleItem : IEntity
 	{
-		public int Id { get; }
-		public List<int> Subjects { get; }
+		public int Id { get; set; }
+		public required List<int> Subjects { get; set; }
 	}
 
 	public class SubjectItem : IEntity
 	{
-		public int Id { get; }
-		public string Name { get; }
+		public int Id { get; set; }
+		public required string Name { get; set; }
 	}
 }

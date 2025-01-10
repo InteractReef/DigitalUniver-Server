@@ -1,4 +1,6 @@
-﻿namespace InteractReef.Packets.Identity
+﻿using InteractReef.Database;
+
+namespace InteractReef.Packets.Identity
 {
 	public enum IdentityStatusCode
 	{

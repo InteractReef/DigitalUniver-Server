@@ -1,4 +1,5 @@
 ﻿using InteractReef.Packets;
+using InteractReef.Packets.Schedules;
 using Microsoft.EntityFrameworkCore;
 
 namespace Schedules.Microservice.Infrastructure.Database
@@ -20,12 +21,12 @@ namespace Schedules.Microservice.Infrastructure.Database
 			modelBuilder.Entity<Schedule>(entity =>
 			{
 				entity.HasKey(s => s.Id);
-				entity.HasMany(s => s.numeratorWeek)
+				entity.HasMany(s => s.NumeratorWeek)
 					  .WithOne()
 					  .HasForeignKey("ScheduleId")
 					  .OnDelete(DeleteBehavior.Cascade);
 
-				entity.HasMany(s => s.denominatorWeek)
+				entity.HasMany(s => s.DenominatorWeek)
 					  .WithOne()
 					  .HasForeignKey("ScheduleId")
 					  .OnDelete(DeleteBehavior.Cascade);
