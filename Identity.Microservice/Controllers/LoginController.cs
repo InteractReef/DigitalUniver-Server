@@ -1,37 +1,47 @@
-﻿using InteractReef.Database.Core;
-using InteractReef.Packets.Identity;
+﻿using InteractReef.Packets.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Identity.Microservice.Infrastructure.Database;
-using Microsoft.EntityFrameworkCore;
 using InteractReef.Sequrity;
+using Identity.Microservice.Infrastructure.Channels;
+using InteractReef.Grpc.Users;
 
 namespace Identity.Microservice.Controllers
 {
 	[ApiController]
-	[Route("identity/login")]
+	[Route("identity/auth")]
 	public class LoginController : Controller
 	{
-		private readonly IRepository<UserModel> _repository;
+		private UserChannel _channel;
 		private readonly ITokenController _tokenController;
 
-		protected LoginController(IRepository<UserModel> repository, ITokenController tokenController)
+		public LoginController(UserChannel channel, ITokenController tokenController)
 		{
-			_repository = repository;
+			_channel = channel;
+			_tokenController = tokenController;
 		}
 
-		[HttpPost]
+		[HttpPost("login")]
 		public async Task<IActionResult> Login([FromBody] LoginRequest request)
 		{
-			var result = await _repository.GetAll().SingleOrDefaultAsync(
-				x => x.Email == request.email 
-				&& x.Password == request.password);
+			var userRequest = new GetUserRequest() { Email = request.email, Password = request.password };
 
-			if(result == null)
+			var token = "";
+			try
+			{
+				var result =  await _channel.UserService.GetUserAsync(userRequest);
+
+				if (result == null)
+				{
+					return NotFound();
+				}
+
+				var userInfo = result.InfoModel;
+
+				token = _tokenController.CreateToken(userInfo.Id, userInfo.Email, userInfo.Password);
+			}
+			catch (Exception ex)
 			{
 				return NotFound();
 			}
-
-			var token = _tokenController.CreateToken(result.Id, result.Email, result.Password);
 
 			return Ok(token);
 		}

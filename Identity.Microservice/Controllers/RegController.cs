@@ -1,38 +1,39 @@
-﻿using Identity.Microservice.Infrastructure.Database;
-using InteractReef.Database.Core;
+﻿using Grpc.Core;
+using Identity.Microservice.Infrastructure.Channels;
+using InteractReef.Grpc.Users;
 using InteractReef.Packets.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Identity.Microservice.Controllers
 {
 	[ApiController]
-	[Route("identity/reg")]
+	[Route("identity/auth")]
 	public class RegController : Controller
 	{
-		private readonly IRepository<UserModel> _repository;
+		private UserChannel _channel;
 
-		protected RegController(IRepository<UserModel> repository)
+		public RegController(UserChannel channel)
 		{
-			_repository = repository;
+			_channel = channel;
 		}
 
-		[HttpPost]
-		public async Task<IActionResult> Register([FromBody] RegRequest request)
+		[HttpPost("reg")]
+		public async Task<IActionResult> Register([FromBody] RegisterRequest request)
 		{
-			var emailIsUsed = await _repository.GetAll().AnyAsync(x => x.Email == request.email);
-			if (emailIsUsed)
-			{
-				return BadRequest(new RegisterRequest(IdentityStatusCode.EmailAlreadyUsed));
-			}
-
-			var user = new UserModel()
+			var userInfo = new UserInfoModel()
 			{
 				Email = request.email,
 				Password = request.password,
 			};
 
-			_repository.Add(user);
+			try
+			{
+				await _channel.UserService.TryAddUserAsync(new AddUserRequest() { UserInfo = userInfo });
+			}
+			catch(RpcException e)
+			{
+				return BadRequest(new RegisterResponce(IdentityStatusCode.EmailAlreadyUsed));
+			}
 
 			return Ok();
 		}

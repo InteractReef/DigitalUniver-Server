@@ -1,6 +1,11 @@
 ﻿using InteractReef.Database;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Identity.Microservice.Infrastructure.Database
+namespace InteractReef.Packets.User
 {
 	public class UserModel : IEntity
 	{

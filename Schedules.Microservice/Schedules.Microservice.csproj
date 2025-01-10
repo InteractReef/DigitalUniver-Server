@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>edc00681-7638-4b63-a5b4-0107e2d964b4</UserSecretsId>
+    <UserSecretsId>64068800-328e-463f-a903-1bb46e60e461</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\InteractReef.Database\InteractReef.Database.Core.csproj" />
     <ProjectReference Include="..\InteractReef.Grpc\InteractReef.Grpc.csproj" />
     <ProjectReference Include="..\InteractReef.Packets\InteractReef.Packets.csproj" />
     <ProjectReference Include="..\InteractReef.Sequrity\InteractReef.Sequrity.csproj" />

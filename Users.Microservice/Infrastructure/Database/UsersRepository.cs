@@ -1,12 +1,13 @@
 ﻿using InteractReef.Database.Core;
+using InteractReef.Packets.User;
 using Microsoft.EntityFrameworkCore;
 
-namespace Identity.Microservice.Infrastructure.Database
+namespace Users.Microservice.Infrastructure.Database
 {
 	public class UsersRepository : GenericRepository<UsersDbContext, UserModel>
 	{
 		public UsersRepository(UsersDbContext dbContext)
-			: base(dbContext)
+		: base(dbContext)
 		{
 		}
 

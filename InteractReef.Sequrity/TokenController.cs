@@ -46,31 +46,31 @@ namespace InteractReef.Sequrity
 		public Dictionary<string, string> GetValues(string token, List<string> keys)
 		{
 			try
-			{
-				var handler = new JwtSecurityTokenHandler();
-				var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
 
-				if (jwtToken == null)
-				{
-					return null;
-				}
+                if (jwtToken == null)
+                {
+                    return null;
+                }
 
-				var claims = jwtToken.Claims.ToDictionary(c => c.Type, c => c.Value);
+                var claims = jwtToken.Claims.ToDictionary(c => c.Type, c => c.Value);
 
-				var result = new Dictionary<string, string>();
-				foreach (var key in keys)
-				{
-					if (claims.TryGetValue(key, out var value))
-					{
-						result.Add(key, value);
-					}
-				}
-				return result;
-			}
-			catch
-			{
-				return null;
-			}
+                var result = new Dictionary<string, string>();
+                foreach (var key in keys)
+                {
+                    if (claims.TryGetValue(key, out var value))
+                    {
+                        result.Add(key, value);
+                    }
+                }
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
 		}
 
 		public string CreateToken(int userId, string email, string password)

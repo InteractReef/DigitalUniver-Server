@@ -1,9 +1,21 @@
-﻿using Identity.Microservice.Infrastructure.Database;
-using InteractReef.Database.Core;
+﻿using InteractReef.Database.Core;
+using InteractReef.Packets.User;
 using Microsoft.EntityFrameworkCore;
+using Users.Microservice.Infrastructure.Database;
 
-namespace Identity.Microservice.Infrastructure.Services
+namespace Users.Microservice.Infrastructure.Registrars
 {
+	public static class DbContextExtensions
+	{
+		public static async Task MigrateDatabaseAsync<TContext>(this IHost webApp) where TContext : DbContext
+		{
+			await using var scope = webApp.Services.CreateAsyncScope();
+			await using var appContext = scope.ServiceProvider.GetRequiredService<TContext>();
+
+			await appContext.Database.MigrateAsync();
+		}
+	}
+
 	public static class DbContextRegistrar
 	{
 		private const string ConnectionStringName = "DefaultConnection";

@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\InteractReef.Database\InteractReef.Database.Core.csproj" />
+  </ItemGroup>
+
 </Project>

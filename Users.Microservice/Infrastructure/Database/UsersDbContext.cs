@@ -1,15 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using InteractReef.Packets.User;
+using Microsoft.EntityFrameworkCore;
 
-namespace Identity.Microservice.Infrastructure.Database
+namespace Users.Microservice.Infrastructure.Database
 {
 	public class UsersDbContext : DbContext
 	{
+		public DbSet<UserModel> Users { get; set; }
+
 		public UsersDbContext(DbContextOptions<UsersDbContext> options)
 		: base(options)
 		{
 		}
-
-		public virtual DbSet<UserModel> Users { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{

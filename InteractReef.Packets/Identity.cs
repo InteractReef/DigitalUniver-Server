@@ -10,6 +10,6 @@
 	public record LoginRequest(string email, string password);
 	public record LoginResponse(string token, IdentityStatusCode status);
 
-	public record RegRequest(string email, string password);
-	public record RegisterRequest(IdentityStatusCode status);
+	public record RegisterRequest(string email, string password);
+	public record RegisterResponce(IdentityStatusCode status);
  }
