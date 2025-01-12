@@ -3,6 +3,7 @@ using Users.Microservice.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using InteractReef.API.Core;
 using InteractReef.Database.Core;
+using InteractReef.Packets.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,8 @@ builder.Services.AddDatabase<UsersDbContext>(builder.Configuration, (config, opt
 	option.UseNpgsql(config.ConnectionString);
 });
 
-builder.Services.AddRepository();
+//builder.Services.AddRepository();
+builder.Services.AddScoped<IRepository<UserModel>, UsersRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -30,8 +32,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-var context = await app.GetDbContext<UsersDbContext>();
-await context.Database.MigrateAsync();
+await app.Services.GetRequiredService<UsersDbContext>().Database.MigrateAsync();
 
 app.UseHttpsRedirection();
 

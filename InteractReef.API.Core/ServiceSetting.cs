@@ -2,6 +2,6 @@
 {
 	public class ServiceSetting
 	{
-		public int[] Ports;
+		public List<int> Ports { get; set; } = new();
 	}
 }

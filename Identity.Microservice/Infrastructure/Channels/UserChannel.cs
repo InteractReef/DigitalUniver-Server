@@ -11,7 +11,7 @@ namespace Identity.Microservice.Infrastructure.Channels
 
 		public UserChannel()
 		{
-			_channel = GrpcChannel.ForAddress("http://localhost:5003");
+			_channel = GrpcChannel.ForAddress("http://users-service:5003");
 			UserService = new AuthUsersService.AuthUsersServiceClient(_channel);
 		}
 	}

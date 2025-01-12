@@ -25,4 +25,7 @@ RUN dotnet publish "./Users.Microservice.csproj" -c $BUILD_CONFIGURATION -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+COPY ../AppSettings-global.json .
+
 ENTRYPOINT ["dotnet", "Users.Microservice.dll"]

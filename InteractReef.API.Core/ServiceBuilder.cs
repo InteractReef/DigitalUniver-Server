@@ -1,5 +1,4 @@
-﻿using InteractReef.Database.Core;
-using InteractReef.Sequrity;
+﻿using InteractReef.Sequrity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -20,13 +19,12 @@ namespace InteractReef.API.Core
 				.AddEnvironmentVariables()
 				.AddCommandLine(args);
 
-			var serviceName = Assembly.GetExecutingAssembly().GetName().Name.Replace(".Microservice", "");
+			var serviceName = Assembly.GetCallingAssembly().GetName().Name.Replace(".Microservice", "");
 
-			builder.Services.Configure<ServiceSetting>(opt => builder.Configuration.GetSection(serviceName));
+			builder.Services.Configure<ServiceSetting>(opt => builder.Configuration.GetSection($"Services:{serviceName}"));
 			builder.Services.Configure<DatabaseConnectionData>(opt =>
 			{
-				var connectionString = builder.Configuration.GetConnectionString(serviceName);
-				opt.ConnectionString = connectionString; 
+				opt.ConnectionString = builder.Configuration.GetConnectionString(serviceName); 
 			});
 
 			return builder;
@@ -34,18 +32,18 @@ namespace InteractReef.API.Core
 
 		public static WebApplicationBuilder ConfigurePorts(this WebApplicationBuilder builder)
 		{
-			var serviceName = Assembly.GetExecutingAssembly().GetName().Name.Replace(".Microservice", "");
+			var serviceName = Assembly.GetCallingAssembly().GetName().Name.Replace(".Microservice", "");
 
 			builder.WebHost.ConfigureKestrel((context, x) =>
 			{
-				var serviceSetting = builder.Configuration.GetSection(serviceName).Get<ServiceSetting>();
+				var serviceSetting = builder.Configuration.GetSection($"Services:{serviceName}").Get<ServiceSetting>();
 
 				x.ListenAnyIP(serviceSetting.Ports[0], option =>
 				{
-					option.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+					option.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
 				}); // Open API
 
-				x.ListenLocalhost(serviceSetting.Ports[1], option =>
+				x.Listen(System.Net.IPAddress.Parse("0.0.0.0"), serviceSetting.Ports[1], option =>
 				{
 					option.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
 				}); // Grpc
@@ -69,31 +67,6 @@ namespace InteractReef.API.Core
 			{
 				dbContextOptions?.Invoke(databaseConfig, opt);
 			});
-			return services;
-		}
-
-		public static IServiceCollection AddRepository(this IServiceCollection services)
-		{
-			var repositoryTypes = Assembly.GetCallingAssembly().GetTypes()
-				.Where(t => t.IsSubclassOf(typeof(GenericRepository<,>)) && !t.IsAbstract)
-				.ToList();
-
-			foreach (var type in repositoryTypes)
-			{
-				var dbSetProperty = type.GetProperties()
-					.FirstOrDefault(p => typeof(DbSet<>).IsAssignableFrom(p.PropertyType));
-
-				if (dbSetProperty != null)
-				{
-					var entityType = dbSetProperty.PropertyType.GetGenericArguments().First();
-
-					var repositoryInterface = typeof(IRepository<>).MakeGenericType(entityType);
-					var repositoryType = typeof(GenericRepository<,>).MakeGenericType(type, entityType);
-
-					services.AddScoped(repositoryInterface, repositoryType);
-				}
-			}
-
 			return services;
 		}
 	}

@@ -1,9 +1,0 @@
-@Identity.Microservice_HostAddress = http://localhost:5062
-
-POST {{Identity.Microservice_HostAddress}}/identity/auth/login
-Accept: application/json
-###
-
-POST {{Identity.Microservice_HostAddress}}/identity/auth/reg
-Accept: application/json
-###

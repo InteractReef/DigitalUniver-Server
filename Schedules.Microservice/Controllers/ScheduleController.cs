@@ -13,6 +13,11 @@ namespace Schedules.Microservice.Controllers
 	{
 		private readonly IRepository<Schedule> _schedulesRepository;
 
+		public ScheduleController(IRepository<Schedule> schedulesRepository) 
+		{
+			_schedulesRepository = schedulesRepository;
+		}
+
 		[HttpGet]
 		public IActionResult Get([FromQuery] int id)
 		{
@@ -20,8 +25,15 @@ namespace Schedules.Microservice.Controllers
 			return schedule != null ? Ok(schedule) : NotFound();
 		}
 
-		[HttpPost("insert")]
-		public IActionResult Insert([FromBody] Schedule schedule)
+		[HttpPost("add")]
+		public IActionResult Add([FromBody] Schedule schedule)
+		{
+			_schedulesRepository.Add(schedule);
+			return Ok();
+		}
+
+		[HttpPost("update")]
+		public IActionResult Update([FromBody] Schedule schedule)
 		{
 			_schedulesRepository.Update(schedule.Id, schedule);
 			return Ok();

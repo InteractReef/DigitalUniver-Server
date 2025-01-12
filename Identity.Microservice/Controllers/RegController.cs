@@ -32,7 +32,7 @@ namespace Identity.Microservice.Controllers
 			}
 			catch(RpcException e)
 			{
-				return BadRequest(new RegisterResponce(IdentityStatusCode.EmailAlreadyUsed));
+				return BadRequest(e.Message);
 			}
 
 			return Ok();

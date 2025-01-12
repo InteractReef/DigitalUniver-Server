@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using InteractReef.API.Core;
 using InteractReef.Database.Core;
 using Organizations.Microservice.Infrastructure.Database;
+using InteractReef.Packets.Organizations;
+using Organizations.Microservice.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +16,10 @@ builder.Services.AddDatabase<OrganizationsDbContext>(builder.Configuration, (con
 	option.UseNpgsql(config.ConnectionString);
 });
 
-builder.Services.AddRepository();
+//builder.Services.AddRepository();
+builder.Services.AddScoped<IRepository<EmployeeModel>, EmployeesRepository>();
+builder.Services.AddScoped<IRepository<OrganizationModel>, OrganizationsRepository>();
+builder.Services.AddScoped<IRepository<StudentModel>, StudentsRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -29,8 +34,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-var context = await app.GetDbContext<OrganizationsDbContext>();
-await context.Database.MigrateAsync();
+await app.Services.GetRequiredService<OrganizationsDbContext>().Database.MigrateAsync();
 
 app.UseHttpsRedirection();
 

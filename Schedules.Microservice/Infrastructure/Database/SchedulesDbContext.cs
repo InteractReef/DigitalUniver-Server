@@ -1,6 +1,7 @@
 ﻿using InteractReef.Packets;
 using InteractReef.Packets.Schedules;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Schedules.Microservice.Infrastructure.Database
 {
@@ -23,24 +24,26 @@ namespace Schedules.Microservice.Infrastructure.Database
 				entity.HasKey(s => s.Id);
 				entity.HasMany(s => s.NumeratorWeek)
 					  .WithOne()
-					  .HasForeignKey("ScheduleId")
+					  .HasForeignKey("ScheduleIdNumerator")
 					  .OnDelete(DeleteBehavior.Cascade);
 
 				entity.HasMany(s => s.DenominatorWeek)
 					  .WithOne()
-					  .HasForeignKey("ScheduleId")
+					  .HasForeignKey("ScheduleIdDenominator")
 					  .OnDelete(DeleteBehavior.Cascade);
 			});
 
-			modelBuilder.Entity<ScheduleItem>(entity =>
-			{
-				entity.HasKey(si => si.Id);
-				entity.Property(si => si.Subjects)
-					  .HasConversion(
-						  v => string.Join(",", v),
-						  v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList()
-					  );
-			});
+			var intListComparer = new ValueComparer<List<int>>(
+			(c1, c2) => c1.SequenceEqual(c2),
+			c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())), 
+			c => c.ToList()); 
+
+			modelBuilder.Entity<ScheduleItem>()
+				.Property(e => e.Subjects)
+				.HasConversion(
+					v => string.Join(',', v), 
+					v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList())
+				.Metadata.SetValueComparer(intListComparer);
 
 			modelBuilder.Entity<SubjectItem>(entity =>
 			{

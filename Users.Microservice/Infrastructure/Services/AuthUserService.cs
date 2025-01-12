@@ -34,8 +34,8 @@ namespace Users.Microservice.Infrastructure.Services
 
 		public override async Task<Empty> TryAddUser(AddUserRequest request, ServerCallContext context)
 		{
-			var emailUsed = await _repository.GetAll().AnyAsync(x => x.Email == request.UserInfo.Email);
-			if (emailUsed)
+			var emailUsed = await _repository.GetAll().FirstOrDefaultAsync(x => x.Email == request.UserInfo.Email);
+			if (emailUsed != null)
 				throw new RpcException(new Status(StatusCode.AlreadyExists, string.Empty));
 
 			var userModel = new UserModel()

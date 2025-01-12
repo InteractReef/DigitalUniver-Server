@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Organizations.Microservice.Infrastructure.Database;
@@ -11,9 +12,11 @@ using Organizations.Microservice.Infrastructure.Database;
 namespace Organizations.Microservice.Migrations
 {
     [DbContext(typeof(OrganizationsDbContext))]
-    partial class OrganizationsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250112182606_Update-dbContext")]
+    partial class UpdatedbContext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
