@@ -15,34 +15,6 @@ namespace InteractReef.Sequrity
 			_secret = configuration["Sequrity:JWT_Secret"];
 		}
 
-		public bool ValidateToken(string token)
-		{
-			try
-			{
-				if (string.IsNullOrEmpty(token))
-				{
-					return false;
-				}
-
-				var handler = new JwtSecurityTokenHandler();
-				var validationParameters = new TokenValidationParameters
-				{
-					ValidateIssuerSigningKey = true,
-					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret)),
-					ValidateIssuer = false,
-					ValidateAudience = false,
-					ClockSkew = TimeSpan.Zero
-				};
-
-				handler.ValidateToken(token, validationParameters, out var validatedToken);
-				return true;
-			}
-			catch
-			{
-				return false;
-			}
-		}
-
 		public Dictionary<string, string> GetValues(string token, List<string> keys)
 		{
 			try

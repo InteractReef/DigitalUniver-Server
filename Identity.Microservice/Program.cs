@@ -7,7 +7,6 @@ builder.AddConfiguration(args);
 builder.ConfigurePorts();
 
 builder.Services.AddSequrity(builder.Configuration);
-builder.Services.AddRepository();
 
 builder.Services.AddSingleton<UserChannel>();
 
