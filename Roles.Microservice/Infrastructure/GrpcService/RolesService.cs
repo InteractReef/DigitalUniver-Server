@@ -1,5 +1,4 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
+﻿using Grpc.Core;
 using InteractReef.Database.Core;
 using InteractReef.Grpc.Roles;
 using InteractReef.Grpc.Base;

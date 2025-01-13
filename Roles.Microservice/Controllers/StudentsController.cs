@@ -1,6 +1,7 @@
 ﻿using Identity.Microservice.Infrastructure.Channels;
 using InteractReef.Database.Core;
 using InteractReef.Packets;
+using InteractReef.Grpc.Base;
 using InteractReef.Sequrity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,13 +33,12 @@ namespace Organizations.Microservice.Controllers
 		{
 			userId = 0;
 
-			var authHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
-			if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+			var token = _tokenController.GetToken(HttpContext);
+			if (string.IsNullOrEmpty(token))
 			{
 				return Unauthorized("JWT token is missing or invalid.");
 			}
 
-			var token = authHeader.Substring("Bearer ".Length).Trim();
 			var values = _tokenController.GetValues(token, new List<string> { ClaimTypes.NameIdentifier });
 
 			if (values == null || values.Count == 0 || !int.TryParse(values[ClaimTypes.NameIdentifier], out userId))
@@ -73,17 +73,17 @@ namespace Organizations.Microservice.Controllers
 			var error = ValidateToken(student.UserId, out var userId);
 			if (error != null) return error;
 
-			var reqeust = new InteractReef.Grpc.Base.MultiplyIdRequest();
+			var reqeust = new MultiplyIdRequest();
 			reqeust.Params.Add(student.OrganizationId);
 			reqeust.Params.Add(student.GroupId);
 
 			var exist = await _organizationChannel.OrganizationService.GroupExistsAsync(reqeust);
-			if (exist.Status != InteractReef.Grpc.Base.GrpcStatus.Ok)
+			if (exist.Status != GrpcStatus.Ok)
 			{
 				switch (exist.Status)
 				{
-					case InteractReef.Grpc.Base.GrpcStatus.NotFound: return NotFound();
-					case InteractReef.Grpc.Base.GrpcStatus.BadRequest: return BadRequest(); 
+					case GrpcStatus.NotFound: return NotFound();
+					case GrpcStatus.BadRequest: return BadRequest();
 				}
 			}
 
@@ -97,17 +97,17 @@ namespace Organizations.Microservice.Controllers
 			var error = ValidateToken(student.UserId, out var userId);
 			if (error != null) return error;
 
-			var reqeust = new InteractReef.Grpc.Base.MultiplyIdRequest();
+			var reqeust = new MultiplyIdRequest();
 			reqeust.Params.Add(student.OrganizationId);
 			reqeust.Params.Add(student.GroupId);
 
 			var exist = await _organizationChannel.OrganizationService.GroupExistsAsync(reqeust);
-			if (exist.Status != InteractReef.Grpc.Base.GrpcStatus.Ok)
+			if (exist.Status != GrpcStatus.Ok)
 			{
 				switch (exist.Status)
 				{
-					case InteractReef.Grpc.Base.GrpcStatus.NotFound: return NotFound();
-					case InteractReef.Grpc.Base.GrpcStatus.BadRequest: return BadRequest();
+					case GrpcStatus.NotFound: return NotFound();
+					case GrpcStatus.BadRequest: return BadRequest();
 				}
 			}
 

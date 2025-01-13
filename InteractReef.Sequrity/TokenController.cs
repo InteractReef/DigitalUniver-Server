@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,6 +14,18 @@ namespace InteractReef.Sequrity
 		public TokenController(IConfiguration configuration)
 		{
 			_secret = configuration["Sequrity:JWT_Secret"];
+		}
+
+		public string GetToken(HttpContext context)
+		{
+			var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+			if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+			{
+				return string.Empty;
+			}
+
+			var token = authHeader.Substring("Bearer ".Length).Trim();
+			return token;
 		}
 
 		public Dictionary<string, string> GetValues(string token, List<string> keys)
@@ -45,14 +58,8 @@ namespace InteractReef.Sequrity
             }
 		}
 
-		public string CreateToken(int userId, string email, string password)
+		public string CreateToken(List<Claim> claims)
 		{
-			var claims = new List<Claim> {
-				new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-				new Claim(ClaimTypes.Email, email),
-				new Claim(ClaimTypes.UserData, password),
-			};
-
 			var jwtToken = new JwtSecurityToken(
 				claims: claims,
 				notBefore: DateTime.UtcNow,

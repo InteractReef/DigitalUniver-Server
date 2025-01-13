@@ -25,13 +25,12 @@ namespace Users.Microservice.Controllers
 		{
 			userId = -1;
 
-			var authHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
-			if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+			var token = _tokenController.GetToken(HttpContext);
+			if (string.IsNullOrEmpty(token))
 			{
 				return Unauthorized("JWT token is missing or invalid.");
 			}
 
-			var token = authHeader.Substring("Bearer ".Length).Trim();
 			var values = _tokenController.GetValues(token, new List<string> { ClaimTypes.NameIdentifier });
 
 			if (values == null || values.Count == 0 || !int.TryParse(values[ClaimTypes.NameIdentifier], out userId))

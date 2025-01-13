@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using InteractReef.Sequrity;
 using Identity.Microservice.Infrastructure.Channels;
 using InteractReef.Grpc.Users;
+using InteractReef.Grpc.Base;
+using System.Security.Claims;
 
 namespace Identity.Microservice.Controllers
 {
@@ -23,25 +25,28 @@ namespace Identity.Microservice.Controllers
 		public async Task<IActionResult> Login([FromBody] LoginRequest request)
 		{
 			var userRequest = new GetUserRequest() { Email = request.email, Password = request.password };
-
-			var token = "";
 			try
 			{
-				var userInfo =  await _channel.UserService.GetUserAsync(userRequest);
+				var responce =  await _channel.UserService.GetUserAsync(userRequest);
 
-				if (userInfo == null)
+				if(responce.Status != GrpcStatus.Ok)
 				{
 					return NotFound();
 				}
 
-				token = _tokenController.CreateToken(userInfo.Id, userInfo.Email, userInfo.Password);
+				var claims = new List<Claim>()
+				{
+					new Claim(ClaimTypes.NameIdentifier, responce.IntResponce.Result.ToString()),
+					new Claim(ClaimTypes.Email, request.email),
+					new Claim(ClaimTypes.UserData, request.password)
+				};
+				var token = _tokenController.CreateToken(claims);
+				return Ok(token);
 			}
 			catch (Exception ex)
 			{
 				return NotFound();
 			}
-
-			return Ok(token);
 		}
 	}
 }

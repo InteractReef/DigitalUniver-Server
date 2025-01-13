@@ -1,8 +1,8 @@
-﻿using Grpc.Core;
-using Identity.Microservice.Infrastructure.Channels;
+﻿using Identity.Microservice.Infrastructure.Channels;
 using InteractReef.Grpc.Users;
 using InteractReef.Packets.Identity;
 using Microsoft.AspNetCore.Mvc;
+using InteractReef.Grpc.Base;
 
 namespace Identity.Microservice.Controllers
 {
@@ -11,12 +11,10 @@ namespace Identity.Microservice.Controllers
 	public class RegController : Controller
 	{
 		private UserChannel _userChannel;
-		private RoleChannel _roleChannel;
 
-		public RegController(UserChannel userChannel, RoleChannel roleChannel)
+		public RegController(UserChannel userChannel)
 		{
 			_userChannel = userChannel;
-			_roleChannel = roleChannel;
 		}
 
 		[HttpPost("reg")]
@@ -28,13 +26,10 @@ namespace Identity.Microservice.Controllers
 				Password = request.password,
 			};
 
-			try
+			var responce = await _userChannel.UserService.TryAddUserAsync(userInfo);
+			if(responce.Status != GrpcStatus.Ok)
 			{
-				await _userChannel.UserService.TryAddUserAsync(userInfo);
-			}
-			catch(RpcException e)
-			{
-				return BadRequest(e.Message);
+				return BadRequest(responce.Status);
 			}
 
 			return Ok();

@@ -1,5 +1,6 @@
 using Identity.Microservice.Infrastructure.Channels;
 using InteractReef.Database.Core;
+using InteractReef.Grpc.Base;
 using InteractReef.Packets;
 using InteractReef.Packets.Organizations;
 using InteractReef.Sequrity;
@@ -55,13 +56,16 @@ namespace Organizations.Microservice.Controllers
 			return null;
 		}
 
-		private async Task<IActionResult> CheckAccess(OrganizationModel model)
+		private async Task<IActionResult> CheckAccess(OrganizationModel model, bool canAdmin = false)
 		{
 			var validationResult = ValidateToken(out var userId);
 			if (validationResult != null) return validationResult;
 
-			var isAdmin = await _roleChannel.RoleService.IsAdminAsync(new InteractReef.Grpc.Roles.IsAdminRequest() { UserId = userId });
-			if (isAdmin.Result) return null;
+			if (canAdmin)
+			{
+				var isAdmin = await _roleChannel.RoleService.IsAdminAsync(new IdRequest() { Id = userId });
+				return isAdmin.Result ? null : Unauthorized();
+			}
 
 			var employee = _employeesRepository.GetAll().FirstOrDefault(x => x.UserId == userId);
 			if (employee == null || employee.Level < 2 || employee.OrganizationId != model.Id) return Unauthorized("No access");
@@ -96,7 +100,7 @@ namespace Organizations.Microservice.Controllers
 		[HttpPost("add")]
 		public async Task<IActionResult> Add([FromBody] OrganizationModel model)
 		{
-			var error = await CheckAccess(model);
+			var error = await CheckAccess(model, true);
 			if (error != null) return error;
 
 			_orgRepository.Add(model);
