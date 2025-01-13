@@ -6,6 +6,6 @@ import "google/protobuf/empty.proto";
 import "Protos/Base.proto";
 
 service OrganizationGrpcService{
-	rpc OrganizationExists(IdRequest) returns (BoolResponce);
-	rpc GroupExists(MultiplyIdRequest) returns (GrpcResponce);
+	rpc OrganizationExists(IdRequest) returns (BoolResponse);
+	rpc GroupExists(IdListRequest) returns (GrpcResponse);
 }

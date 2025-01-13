@@ -36,7 +36,7 @@ namespace Identity.Microservice.Controllers
 
 				var claims = new List<Claim>()
 				{
-					new Claim(ClaimTypes.NameIdentifier, responce.IntResponce.Result.ToString()),
+					new Claim(ClaimTypes.NameIdentifier, responce.IntResponse.Result.ToString()),
 					new Claim(ClaimTypes.Email, request.email),
 					new Claim(ClaimTypes.UserData, request.password)
 				};

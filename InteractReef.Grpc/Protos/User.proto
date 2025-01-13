@@ -17,6 +17,6 @@ message UserInfoModel{
 }
 
 service AuthUsersService{
-	rpc TryAddUser(UserInfoModel) returns (GrpcResponce);
-	rpc GetUser(GetUserRequest) returns (GrpcResponce);
+	rpc TryAddUser(UserInfoModel) returns (GrpcResponse);
+	rpc GetUser(GetUserRequest) returns (GrpcResponse);
 }

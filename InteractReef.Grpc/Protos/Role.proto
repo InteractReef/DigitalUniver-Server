@@ -6,11 +6,11 @@ import "google/protobuf/empty.proto";
 import "Protos/Base.proto";
 
 service RoleGrpcService{
-	rpc IsStudent(MultiplyIdRequest) returns (BoolResponce);
-	rpc IsAdmin(IdRequest) returns (BoolResponce);
-	rpc IsEmployee(MultiplyIdRequest) returns (BoolResponce);
+	rpc IsStudent(IdListRequest) returns (BoolResponse);
+	rpc IsAdmin(IdRequest) returns (BoolResponse);
+	rpc IsEmployee(IdListRequest) returns (BoolResponse);
 
-	rpc SetAdmin(IdRequest) returns (GrpcResponce);
-	rpc SetEmployee(MultiplyIdRequest) returns (GrpcResponce);
-	rpc SetStudent(MultiplyIdRequest) returns (GrpcResponce);
+	rpc SetAdmin(IdRequest) returns (GrpcResponse);
+	rpc SetEmployee(IdListRequest) returns (GrpcResponse);
+	rpc SetStudent(IdListRequest) returns (GrpcResponse);
 }

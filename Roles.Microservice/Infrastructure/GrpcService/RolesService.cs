@@ -23,48 +23,48 @@ namespace Roles.Microservice.Infrastructure.GrpcService
 			_studentRepository = studentRepository;
 		}
 
-		public override async Task<BoolResponce> IsAdmin(IdRequest request, ServerCallContext context)
+		public override async Task<BoolResponse> IsAdmin(IdRequest request, ServerCallContext context)
 		{
 			var user = _adminRepository.GetById(request.Id);
-			return await Task.FromResult(new BoolResponce() { Result = user != null });
+			return await Task.FromResult(new BoolResponse() { Result = user != null });
 		}
 
-		public override async Task<BoolResponce> IsEmployee(MultiplyIdRequest request, ServerCallContext context)
+		public override async Task<BoolResponse> IsEmployee(IdListRequest request, ServerCallContext context)
 		{
-			if(request.Params.Count < 2) return new BoolResponce() { Result = false };
+			if(request.Params.Count < 2) return new BoolResponse() { Result = false };
 
 			var user = await _employeeRepository.GetAll().FirstOrDefaultAsync(
 				x => x.OrganizationId == request.Params[0] 
 				&& x.UserId == request.Params[1]);
 
-			return new BoolResponce() { Result = user != null };
+			return new BoolResponse() { Result = user != null };
 		}
 
-		public override async Task<BoolResponce> IsStudent(MultiplyIdRequest request, ServerCallContext context)
+		public override async Task<BoolResponse> IsStudent(IdListRequest request, ServerCallContext context)
 		{
-			if (request.Params.Count < 3) return new BoolResponce() { Result = false };
+			if (request.Params.Count < 3) return new BoolResponse() { Result = false };
 
 			var user = await _studentRepository.GetAll().FirstOrDefaultAsync(
 				x => x.UserId == request.Params[0]
 				&& x.GroupId == request.Params[1]
 				&& x.OrganizationId == request.Params[2]);
 
-			return new BoolResponce() { Result = user != null };
+			return new BoolResponse() { Result = user != null };
 		}
 
-		public override async Task<GrpcResponce> SetAdmin(IdRequest request, ServerCallContext context)
+		public override async Task<GrpcResponse> SetAdmin(IdRequest request, ServerCallContext context)
 		{
 			var model = new AdminModel()
 			{
 				UserId = request.Id,
 			};
 			_adminRepository.Add(model);
-			return await Task.FromResult(new GrpcResponce() { Status = GrpcStatus.Ok });
+			return await Task.FromResult(new GrpcResponse() { Status = GrpcStatus.Ok });
 		}
 
-		public override async Task<GrpcResponce> SetEmployee(MultiplyIdRequest request, ServerCallContext context)
+		public override async Task<GrpcResponse> SetEmployee(IdListRequest request, ServerCallContext context)
 		{
-			if (request.Params.Count < 2) return await Task.FromResult(new GrpcResponce() { Status = GrpcStatus.BadRequest });
+			if (request.Params.Count < 2) return await Task.FromResult(new GrpcResponse() { Status = GrpcStatus.BadRequest });
 
 			var model = new EmployeeModel()
 			{
@@ -73,12 +73,12 @@ namespace Roles.Microservice.Infrastructure.GrpcService
 			};
 			_employeeRepository.Add(model);
 
-			return await Task.FromResult(new GrpcResponce() { Status = GrpcStatus.Ok });
+			return await Task.FromResult(new GrpcResponse() { Status = GrpcStatus.Ok });
 		}
 
-		public override async Task<GrpcResponce> SetStudent(MultiplyIdRequest request, ServerCallContext context)
+		public override async Task<GrpcResponse> SetStudent(IdListRequest request, ServerCallContext context)
 		{
-			if (request.Params.Count < 3) return await Task.FromResult(new GrpcResponce() { Status = GrpcStatus.BadRequest });
+			if (request.Params.Count < 3) return await Task.FromResult(new GrpcResponse() { Status = GrpcStatus.BadRequest });
 
 			var model = new StudentModel()
 			{
@@ -87,7 +87,7 @@ namespace Roles.Microservice.Infrastructure.GrpcService
 				OrganizationId = request.Params[2],
 			};
 			_studentRepository.Add(model);
-			return await Task.FromResult(new GrpcResponce() { Status = GrpcStatus.Ok });
+			return await Task.FromResult(new GrpcResponse() { Status = GrpcStatus.Ok });
 		}
 	}
 }

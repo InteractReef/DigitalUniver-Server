@@ -18,24 +18,24 @@ namespace Organizations.Microservice.Infrastructure.GrpcService
 			_repository	= repository;
 		}
 
-		public override async Task<BoolResponce> OrganizationExists(IdRequest request, ServerCallContext context)
+		public override async Task<BoolResponse> OrganizationExists(IdRequest request, ServerCallContext context)
 		{
 			var org = _repository.GetById(request.Id);
-			return await Task.FromResult(new BoolResponce() { Result = org != null });
+			return await Task.FromResult(new BoolResponse() { Result = org != null });
 		}
 
-		public override async Task<GrpcResponce> GroupExists(MultiplyIdRequest request, ServerCallContext context)
+		public override async Task<GrpcResponse> GroupExists(IdListRequest request, ServerCallContext context)
 		{
-			if (request.Params.Count < 2) return new GrpcResponce() { Status = GrpcStatus.BadRequest };
+			if (request.Params.Count < 2) return new GrpcResponse() { Status = GrpcStatus.BadRequest };
 
 			var exists = await _repository.GetAll().AnyAsync(
 				org => org.Id == request.Params[0] 
 				&& org.Groups.Any(group => group.Id == request.Params[1]));
 
-			return new GrpcResponce() 
+			return new GrpcResponse() 
 			{ 
 				Status = exists ? GrpcStatus.Ok : GrpcStatus.NotFound,
-				BoolResponce = new BoolResponce() { Result = exists } 
+				BoolResponse = new BoolResponse() { Result = exists } 
 			};
 		}
 	}

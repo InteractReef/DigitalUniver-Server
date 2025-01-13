@@ -58,7 +58,7 @@ namespace Schedules.Microservice.Controllers
 			var validationResult = ValidateToken(out var userId);
 			if (validationResult != null) return validationResult;
 
-			var request = new MultiplyIdRequest();
+			var request = new IdListRequest();
 			request.Params.Add(userId);
 			request.Params.Add(model.OrgId);
 

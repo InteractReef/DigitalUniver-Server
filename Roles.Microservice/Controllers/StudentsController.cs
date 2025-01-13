@@ -73,7 +73,7 @@ namespace Organizations.Microservice.Controllers
 			var error = ValidateToken(student.UserId, out var userId);
 			if (error != null) return error;
 
-			var reqeust = new MultiplyIdRequest();
+			var reqeust = new IdListRequest();
 			reqeust.Params.Add(student.OrganizationId);
 			reqeust.Params.Add(student.GroupId);
 
@@ -97,7 +97,7 @@ namespace Organizations.Microservice.Controllers
 			var error = ValidateToken(student.UserId, out var userId);
 			if (error != null) return error;
 
-			var reqeust = new MultiplyIdRequest();
+			var reqeust = new IdListRequest();
 			reqeust.Params.Add(student.OrganizationId);
 			reqeust.Params.Add(student.GroupId);
 

@@ -16,20 +16,20 @@ namespace Users.Microservice.Infrastructure.Services
 			_repository = repository;
 		}
 
-		public override async Task<GrpcResponce> GetUser(GetUserRequest request, ServerCallContext context)
+		public override async Task<GrpcResponse> GetUser(GetUserRequest request, ServerCallContext context)
 		{
 			var user = await _repository.GetAll().SingleOrDefaultAsync(x => x.Email == request.Email && x.Password == request.Password);
 			if (user == null)
-				return new GrpcResponce() { Status = GrpcStatus.NotFound };
+				return new GrpcResponse() { Status = GrpcStatus.NotFound };
 
-			return new GrpcResponce() { Status = GrpcStatus.Ok, IntResponce = new IntResponce() { Result = user.Id } };
+			return new GrpcResponse() { Status = GrpcStatus.Ok, IntResponse = new IntResponse() { Result = user.Id } };
 		}
 
-		public override async Task<GrpcResponce> TryAddUser(UserInfoModel request, ServerCallContext context)
+		public override async Task<GrpcResponse> TryAddUser(UserInfoModel request, ServerCallContext context)
 		{
 			var emailUsed = await _repository.GetAll().FirstOrDefaultAsync(x => x.Email == request.Email);
 			if (emailUsed != null)
-				return new GrpcResponce() { Status = GrpcStatus.AlreadyExist };
+				return new GrpcResponse() { Status = GrpcStatus.AlreadyExist };
 
 			var userModel = new UserModel()
 			{
@@ -37,7 +37,7 @@ namespace Users.Microservice.Infrastructure.Services
 				Password = request.Password,
 			};
 			_repository.Add(userModel);
-			return new GrpcResponce() { Status = GrpcStatus.Ok };
+			return new GrpcResponse() { Status = GrpcStatus.Ok };
 		}
 	}
 }
