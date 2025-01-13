@@ -73,16 +73,18 @@ namespace Organizations.Microservice.Controllers
 			var error = ValidateToken(student.UserId, out var userId);
 			if (error != null) return error;
 
-			var reqeust = new InteractReef.Grpc.Organizations.GetGroupById() 
-			{ 
-				Organizationid = student.OrganizationId,
-				GroupId = student.GroupId,
-			};
+			var reqeust = new InteractReef.Grpc.Base.MultiplyIdRequest();
+			reqeust.Params.Add(student.OrganizationId);
+			reqeust.Params.Add(student.GroupId);
 
 			var exist = await _organizationChannel.OrganizationService.GroupExistsAsync(reqeust);
-			if (!exist.Result)
+			if (exist.Status != InteractReef.Grpc.Base.GrpcStatus.Ok)
 			{
-				return NotFound();
+				switch (exist.Status)
+				{
+					case InteractReef.Grpc.Base.GrpcStatus.NotFound: return NotFound();
+					case InteractReef.Grpc.Base.GrpcStatus.BadRequest: return BadRequest(); 
+				}
 			}
 
 			_studentsRepository.Add(student);
@@ -95,16 +97,18 @@ namespace Organizations.Microservice.Controllers
 			var error = ValidateToken(student.UserId, out var userId);
 			if (error != null) return error;
 
-			var reqeust = new InteractReef.Grpc.Organizations.GetGroupById()
-			{
-				Organizationid = student.OrganizationId,
-				GroupId = student.GroupId,
-			};
+			var reqeust = new InteractReef.Grpc.Base.MultiplyIdRequest();
+			reqeust.Params.Add(student.OrganizationId);
+			reqeust.Params.Add(student.GroupId);
 
 			var exist = await _organizationChannel.OrganizationService.GroupExistsAsync(reqeust);
-			if (!exist.Result)
+			if (exist.Status != InteractReef.Grpc.Base.GrpcStatus.Ok)
 			{
-				return NotFound();
+				switch (exist.Status)
+				{
+					case InteractReef.Grpc.Base.GrpcStatus.NotFound: return NotFound();
+					case InteractReef.Grpc.Base.GrpcStatus.BadRequest: return BadRequest();
+				}
 			}
 
 			_studentsRepository.Update(student.Id, student);

@@ -2,6 +2,7 @@
 using Grpc.Core;
 using InteractReef.Database.Core;
 using InteractReef.Grpc.Roles;
+using InteractReef.Grpc.Base;
 using InteractReef.Packets;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,62 +24,71 @@ namespace Roles.Microservice.Infrastructure.GrpcService
 			_studentRepository = studentRepository;
 		}
 
-		public override async Task<IsGroupMemberResponce> IsAdmin(IsAdminRequest request, ServerCallContext context)
+		public override async Task<BoolResponce> IsAdmin(IdRequest request, ServerCallContext context)
 		{
-			var user = _adminRepository.GetById(request.UserId);
-			return await Task.FromResult(new IsGroupMemberResponce() { Result = user != null });
+			var user = _adminRepository.GetById(request.Id);
+			return await Task.FromResult(new BoolResponce() { Result = user != null });
 		}
 
-		public override async Task<IsGroupMemberResponce> IsEmployee(IsEmployeeRequest request, ServerCallContext context)
+		public override async Task<BoolResponce> IsEmployee(MultiplyIdRequest request, ServerCallContext context)
 		{
+			if(request.Params.Count < 2) return new BoolResponce() { Result = false };
+
 			var user = await _employeeRepository.GetAll().FirstOrDefaultAsync(
-				x => x.OrganizationId == request.OrganizationId 
-				&& x.UserId == request.UserId);
+				x => x.OrganizationId == request.Params[0] 
+				&& x.UserId == request.Params[1]);
 
-			return new IsGroupMemberResponce() { Result = user != null };
+			return new BoolResponce() { Result = user != null };
 		}
 
-		public override async Task<IsGroupMemberResponce> IsStudent(IsStudentRequest request, ServerCallContext context)
+		public override async Task<BoolResponce> IsStudent(MultiplyIdRequest request, ServerCallContext context)
 		{
-			var user = await _studentRepository.GetAll().FirstOrDefaultAsync(
-				x => x.OrganizationId == request.OrganizationId
-				&& x.GroupId == request.GroupId
-				&& x.UserId == request.UserId);
+			if (request.Params.Count < 3) return new BoolResponce() { Result = false };
 
-			return new IsGroupMemberResponce() { Result = user != null };
+			var user = await _studentRepository.GetAll().FirstOrDefaultAsync(
+				x => x.UserId == request.Params[0]
+				&& x.GroupId == request.Params[1]
+				&& x.OrganizationId == request.Params[2]);
+
+			return new BoolResponce() { Result = user != null };
 		}
 
-		public override async Task<Empty> SetAdmin(SetAdminRequest request, ServerCallContext context)
+		public override async Task<GrpcResponce> SetAdmin(IdRequest request, ServerCallContext context)
 		{
 			var model = new AdminModel()
 			{
-				UserId = request.UserId,
+				UserId = request.Id,
 			};
 			_adminRepository.Add(model);
-			return await Task.FromResult(new Empty());
+			return await Task.FromResult(new GrpcResponce() { Status = GrpcStatus.Ok });
 		}
 
-		public override async Task<Empty> SetEmployee(SetEmployeeRequest request, ServerCallContext context)
+		public override async Task<GrpcResponce> SetEmployee(MultiplyIdRequest request, ServerCallContext context)
 		{
+			if (request.Params.Count < 2) return await Task.FromResult(new GrpcResponce() { Status = GrpcStatus.BadRequest });
+
 			var model = new EmployeeModel()
 			{
-				UserId = request.UserId,
-				OrganizationId = request.OrganizationId,
+				UserId = request.Params[0],
+				OrganizationId = request.Params[1],
 			};
 			_employeeRepository.Add(model);
-			return await Task.FromResult(new Empty());
+
+			return await Task.FromResult(new GrpcResponce() { Status = GrpcStatus.Ok });
 		}
 
-		public override async Task<Empty> SetStudent(SetStudentRequest request, ServerCallContext context)
+		public override async Task<GrpcResponce> SetStudent(MultiplyIdRequest request, ServerCallContext context)
 		{
+			if (request.Params.Count < 3) return await Task.FromResult(new GrpcResponce() { Status = GrpcStatus.BadRequest });
+
 			var model = new StudentModel()
 			{
-				UserId = request.UserId,
-				OrganizationId = request.OrganizationId,
-				GroupId = request.GroupId,
+				UserId = request.Params[0],
+				GroupId = request.Params[1],
+				OrganizationId = request.Params[2],
 			};
 			_studentRepository.Add(model);
-			return await Task.FromResult(new Empty());
+			return await Task.FromResult(new GrpcResponce() { Status = GrpcStatus.Ok });
 		}
 	}
 }

@@ -1,7 +1,9 @@
 ﻿using Grpc.Core;
 using InteractReef.Database.Core;
+using InteractReef.Grpc.Base;
 using InteractReef.Grpc.Organizations;
 using InteractReef.Packets.Organizations;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
@@ -16,16 +18,25 @@ namespace Organizations.Microservice.Infrastructure.GrpcService
 			_repository	= repository;
 		}
 
-		public override async Task<ExistResponce> OrganizationExists(GetById request, ServerCallContext context)
+		public override async Task<BoolResponce> OrganizationExists(IdRequest request, ServerCallContext context)
 		{
 			var org = _repository.GetById(request.Id);
-			return await Task.FromResult(new ExistResponce() { Result = org != null });
+			return await Task.FromResult(new BoolResponce() { Result = org != null });
 		}
 
-		public override async Task<ExistResponce> GroupExists(GetGroupById request, ServerCallContext context)
+		public override async Task<GrpcResponce> GroupExists(MultiplyIdRequest request, ServerCallContext context)
 		{
-			var exists = await _repository.GetAll().AnyAsync(org => org.Id == request.Organizationid && org.Groups.Any(group => group.Id == request.GroupId));
-			return new ExistResponce() { Result = exists };
+			if (request.Params.Count < 2) return new GrpcResponce() { Status = GrpcStatus.BadRequest };
+
+			var exists = await _repository.GetAll().AnyAsync(
+				org => org.Id == request.Params[0] 
+				&& org.Groups.Any(group => group.Id == request.Params[1]));
+
+			return new GrpcResponce() 
+			{ 
+				Status = exists ? GrpcStatus.Ok : GrpcStatus.NotFound,
+				BoolResponce = new BoolResponce() { Result = exists } 
+			};
 		}
 	}
 }

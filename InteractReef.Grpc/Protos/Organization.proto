@@ -3,21 +3,9 @@
 option csharp_namespace = "InteractReef.Grpc.Organizations";
 
 import "google/protobuf/empty.proto";
-
-message GetById{
-	int32 id = 1;
-}
-
-message GetGroupById{
-	int32 groupId = 1;
-	int32 organizationid = 2;
-}
-
-message ExistResponce{
-	bool result = 1;
-}
+import "Protos/Base.proto";
 
 service OrganizationGrpcService{
-	rpc OrganizationExists(GetById) returns (ExistResponce);
-	rpc GroupExists(GetGroupById) returns (ExistResponce);
+	rpc OrganizationExists(IdRequest) returns (BoolResponce);
+	rpc GroupExists(MultiplyIdRequest) returns (GrpcResponce);
 }

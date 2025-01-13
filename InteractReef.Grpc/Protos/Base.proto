@@ -1,0 +1,42 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "InteractReef.Grpc.Base";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/any.proto";
+
+enum GrpcStatus {
+	Ok = 0;
+	NotFound = 1;
+	AlreadyExist = 2;
+	BadRequest = 3;
+}
+
+message IdRequest {
+	sfixed32 id = 1;
+}
+
+message MultiplyIdRequest {
+	repeated sfixed32 params = 1;
+}
+
+message BoolResponce {
+	bool result = 1;
+}
+
+message IntResponce {
+	sfixed32 result = 1;
+}
+
+message ObjectResponce {
+	google.protobuf.Any result = 1;
+}
+
+message GrpcResponce {
+	GrpcStatus status = 1;
+	oneof payload {
+		IntResponce intResponce = 2;
+		BoolResponce boolResponce = 3;
+		ObjectResponce objectResponce = 4;
+	}
+}
