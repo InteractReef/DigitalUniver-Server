@@ -27,14 +27,12 @@ namespace Identity.Microservice.Controllers
 			var token = "";
 			try
 			{
-				var result =  await _channel.UserService.GetUserAsync(userRequest);
+				var userInfo =  await _channel.UserService.GetUserAsync(userRequest);
 
-				if (result == null)
+				if (userInfo == null)
 				{
 					return NotFound();
 				}
-
-				var userInfo = result.InfoModel;
 
 				token = _tokenController.CreateToken(userInfo.Id, userInfo.Email, userInfo.Password);
 			}

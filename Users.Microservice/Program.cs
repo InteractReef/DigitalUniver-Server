@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using InteractReef.API.Core;
 using InteractReef.Database.Core;
 using InteractReef.Packets.Users;
+using Users.Microservice.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,5 +1,5 @@
 ﻿using InteractReef.Database.Core;
-using InteractReef.Packets.Organizations;
+using InteractReef.Packets;
 using InteractReef.Sequrity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,20 +10,17 @@ namespace Organizations.Microservice.Controllers
 	[Authorize]
 	[ApiController]
 	[Route("[controller]")]
-	public class StudentsController : ControllerBase
+	public class AdminsController : ControllerBase
 	{
-		private readonly IRepository<StudentModel> _studentsRepository;
-		private readonly IRepository<OrganizationModel> _organizationsRepository;
+		private readonly IRepository<AdminModel> _adminsRepository;
 
 		private readonly ITokenController _tokenController;
 
-		public StudentsController(
-			IRepository<StudentModel> students, 
-			IRepository<OrganizationModel> organization,
+		public AdminsController(
+			IRepository<AdminModel> admins,
 			ITokenController tokenController)
 		{
-			_organizationsRepository = organization;
-			_studentsRepository = students;
+			_adminsRepository = admins;
 			_tokenController = tokenController;
 		}
 
@@ -51,42 +48,31 @@ namespace Organizations.Microservice.Controllers
 			return null;
 		}
 
-		[HttpGet("group/{id}")]
-		public IActionResult GetByGroup([FromQuery] int id)
-		{
-			var items = _studentsRepository.GetAll().Where(x => x.GroupId == id);
-			return Ok(items);
-		}
-
 		[HttpGet("{id}")]
 		public IActionResult GetById([FromQuery] int id)
 		{
-			var item = _studentsRepository.GetById(id);
+			var item = _adminsRepository.GetById(id);
 			if (item == null) return NotFound();
 			return Ok(item);
 		}
 
 		[HttpPost("add")]
-		public IActionResult Add([FromBody] StudentModel student) 
+		public IActionResult Add([FromBody] AdminModel admin) 
 		{
-			var error = ValidateToken(student.UserId, out var userId);
+			var error = ValidateToken(admin.UserId, out var userId);
 			if (error != null) return error;
 
-			var org = _organizationsRepository.GetById(student.OrganizationId);
-			if (org == null) return NotFound("Organization not found");
-			if (org.Groups.FirstOrDefault(x => x.Id == student.GroupId) == null) return NotFound("Group not found");
-
-			_studentsRepository.Add(student);
+			_adminsRepository.Add(admin);
 			return Ok();
 		}
 
 		[HttpPost("update")]
-		public IActionResult Update([FromBody] StudentModel student) 
+		public IActionResult Update([FromBody] AdminModel admin) 
 		{
-			var error = ValidateToken(student.UserId, out var userId);
+			var error = ValidateToken(admin.UserId, out var userId);
 			if (error != null) return error;
 
-			_studentsRepository.Update(student.Id, student);
+			_adminsRepository.Update(admin.Id, admin);
 			return Ok();
 		}
 
@@ -96,10 +82,10 @@ namespace Organizations.Microservice.Controllers
 			var error = ValidateToken(id, out var userId);
 			if (error != null) return error;
 
-			var item = _studentsRepository.GetById(id);
+			var item = _adminsRepository.GetById(id);
 			if (item == null) return NotFound();
 
-			_studentsRepository.Delete(item);
+			_adminsRepository.Delete(item);
 			return Ok();
 		}
 	}

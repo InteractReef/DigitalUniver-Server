@@ -1,0 +1,23 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "InteractReef.Grpc.Organizations";
+
+import "google/protobuf/empty.proto";
+
+message GetById{
+	int32 id = 1;
+}
+
+message GetGroupById{
+	int32 groupId = 1;
+	int32 organizationid = 2;
+}
+
+message ExistResponce{
+	bool result = 1;
+}
+
+service OrganizationGrpcService{
+	rpc OrganizationExists(GetById) returns (ExistResponce);
+	rpc GroupExists(GetGroupById) returns (ExistResponce);
+}

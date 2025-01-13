@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using InteractReef.API.Core;
 using InteractReef.Database.Core;
-using Organizations.Microservice.Infrastructure.Database;
-using InteractReef.Packets.Organizations;
-using Organizations.Microservice.Infrastructure.Repository;
-using Organizations.Microservice.Infrastructure.GrpcService;
+using Roles.Microservice.Infrastructure.Database;
+using InteractReef.Packets;
+using Roles.Microservice.Infrastructure.Repository;
+using Roles.Microservice.Infrastructure.GrpcService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,17 +12,18 @@ builder.AddConfiguration(args);
 builder.ConfigurePorts();
 
 builder.Services.AddSequrity(builder.Configuration);
-builder.Services.AddDatabase<OrganizationsDbContext>(builder.Configuration, (config, option) =>
+builder.Services.AddDatabase<RolesDbContext>(builder.Configuration, (config, option) =>
 {
 	option.UseNpgsql(config.ConnectionString);
 });
 
-builder.Services.AddScoped<IRepository<OrganizationModel>, OrganizationsRepository>();
+builder.Services.AddScoped<IRepository<AdminModel>, AdminsRepository>();
+builder.Services.AddScoped<IRepository<EmployeeModel>, EmployeesRepository>();
+builder.Services.AddScoped<IRepository<StudentModel>, StudentsRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddGrpc();
 
 var app = builder.Build();
 
@@ -32,14 +33,13 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-await app.Services.GetRequiredService<OrganizationsDbContext>().Database.MigrateAsync();
+await app.Services.GetRequiredService<RolesDbContext>().Database.MigrateAsync();
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.MapGrpcService<OrganizationService>();
+app.MapGrpcService<RolesService>();
 
 app.Run();

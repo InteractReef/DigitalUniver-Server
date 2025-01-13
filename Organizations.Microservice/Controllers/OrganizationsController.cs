@@ -1,3 +1,4 @@
+using Identity.Microservice.Infrastructure.Channels;
 using InteractReef.Database.Core;
 using InteractReef.Packets;
 using InteractReef.Packets.Organizations;
@@ -14,16 +15,20 @@ namespace Organizations.Microservice.Controllers
 	[Route("org")]
 	public class OrganizationsController : ControllerBase
 	{
+		private readonly RoleChannel _roleChannel;
+
 		private readonly IRepository<OrganizationModel> _orgRepository;
 		private readonly IRepository<EmployeeModel> _employeesRepository;
 		
 		private readonly ITokenController _tokenController;
 
 		public OrganizationsController(
+			RoleChannel roleChannel,
 			IRepository<OrganizationModel> orgRepository, 
 			IRepository<EmployeeModel> employeesRepository,
 			ITokenController tokenController) 
 		{
+			_roleChannel = roleChannel;
 			_orgRepository = orgRepository;
 			_employeesRepository = employeesRepository;
 			_tokenController = tokenController;
@@ -50,10 +55,13 @@ namespace Organizations.Microservice.Controllers
 			return null;
 		}
 
-		private IActionResult CheckAccess(OrganizationModel model)
+		private async Task<IActionResult> CheckAccess(OrganizationModel model)
 		{
 			var validationResult = ValidateToken(out var userId);
 			if (validationResult != null) return validationResult;
+
+			var isAdmin = await _roleChannel.RoleService.IsAdminAsync(new InteractReef.Grpc.Roles.IsAdminRequest() { UserId = userId });
+			if (isAdmin.Result) return null;
 
 			var employee = _employeesRepository.GetAll().FirstOrDefault(x => x.UserId == userId);
 			if (employee == null || employee.Level < 2 || employee.OrganizationId != model.Id) return Unauthorized("No access");
@@ -86,17 +94,19 @@ namespace Organizations.Microservice.Controllers
 		}
 
 		[HttpPost("add")]
-		public IActionResult Add([FromBody] OrganizationModel model)
+		public async Task<IActionResult> Add([FromBody] OrganizationModel model)
 		{
-			// TO DO: Admin check
+			var error = await CheckAccess(model);
+			if (error != null) return error;
+
 			_orgRepository.Add(model);
 			return Ok();
 		}
 
 		[HttpPost("update")]
-		public IActionResult Update([FromBody] OrganizationModel model)
+		public async Task<IActionResult> Update([FromBody] OrganizationModel model)
 		{
-			var error = CheckAccess(model);
+			var error = await CheckAccess(model);
 			if (error != null) return error;
 
 			_orgRepository.Update(model.Id, model);
@@ -104,13 +114,12 @@ namespace Organizations.Microservice.Controllers
 		}
 
 		[HttpPost("delete")]
-		public IActionResult Delete([FromQuery] int id) 
+		public async Task<IActionResult> Delete([FromQuery] int id) 
 		{
-			// TO DO: Admin check
 			var item = _orgRepository.GetById(id);
 			if (item == null) return NotFound();
 
-			var error = CheckAccess(item);
+			var error = await CheckAccess(item);
 			if (error != null) return error;
 
 			_orgRepository.Delete(item);

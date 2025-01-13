@@ -1,0 +1,49 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "InteractReef.Grpc.Roles";
+
+import "google/protobuf/empty.proto";
+
+message SetAdminRequest{
+	int32 userId = 1;
+}
+
+message SetEmployeeRequest{
+	int32 userId = 1;
+	int32 organizationId = 2;
+}
+
+message SetStudentRequest{
+	int32 userId = 1;
+	int32 organizationId = 2;
+	int32 groupId = 3;
+}
+
+message IsAdminRequest{
+	int32 userId = 1;
+}
+
+message IsEmployeeRequest{
+	int32 userId = 1;
+	int32 organizationId = 2;
+}
+
+message IsStudentRequest{
+	int32 userId = 1;
+	int32 groupId = 2;
+	int32 organizationId = 3;
+}
+
+message IsGroupMemberResponce{
+	bool result = 1;
+}
+
+service RoleGrpcService{
+	rpc IsStudent(IsStudentRequest) returns (IsGroupMemberResponce);
+	rpc IsAdmin(IsAdminRequest) returns (IsGroupMemberResponce);
+	rpc IsEmployee(IsEmployeeRequest) returns (IsGroupMemberResponce);
+
+	rpc SetAdmin(SetAdminRequest) returns (google.protobuf.Empty);
+	rpc SetEmployee(SetEmployeeRequest) returns (google.protobuf.Empty);
+	rpc SetStudent(SetStudentRequest) returns (google.protobuf.Empty);
+}

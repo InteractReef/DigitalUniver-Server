@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Protos\Organization.proto" />
+    <None Remove="Protos\Role.proto" />
     <None Remove="Protos\User.proto" />
   </ItemGroup>
 
@@ -20,6 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Protobuf Include="Protos\Organization.proto" />
+    <Protobuf Include="Protos\Role.proto" />
     <Protobuf Include="Protos\User.proto" />
   </ItemGroup>
 

@@ -4,17 +4,9 @@ option csharp_namespace = "InteractReef.Grpc.Users";
 
 import "google/protobuf/empty.proto";
 
-message AddUserRequest{
-	UserInfoModel userInfo = 1;
-}
-
 message GetUserRequest{
 	string email = 1;
 	string password = 2;
-}
-
-message GetUserResponce{
-	UserInfoModel infoModel = 1;
 }
 
 message UserContainsResponce{
@@ -27,7 +19,11 @@ message UserInfoModel{
 	string password = 3;
 }
 
+message GetUserIdResponce{
+	int32 userId = 1;
+}
+
 service AuthUsersService{
-	rpc TryAddUser(AddUserRequest) returns (google.protobuf.Empty);
-	rpc GetUser(GetUserRequest) returns (GetUserResponce);
+	rpc TryAddUser(UserInfoModel) returns (google.protobuf.Empty);
+	rpc GetUser(GetUserRequest) returns (UserInfoModel);
 }

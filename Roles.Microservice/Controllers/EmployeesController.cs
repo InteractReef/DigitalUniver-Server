@@ -1,5 +1,6 @@
-﻿using InteractReef.Database.Core;
-using InteractReef.Packets.Organizations;
+﻿using Identity.Microservice.Infrastructure.Channels;
+using InteractReef.Database.Core;
+using InteractReef.Packets;
 using InteractReef.Sequrity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -8,17 +9,17 @@ namespace Organizations.Microservice.Controllers
 {
 	public class EmployeesController : Controller
 	{
-		private readonly IRepository<OrganizationModel> _orgRepository;
+		private readonly OrganizationChannel _organizationChannel;
 		private readonly IRepository<EmployeeModel> _employeesRepository;
 
 		private readonly ITokenController _tokenController;
 
 		public EmployeesController(
-			IRepository<OrganizationModel> orgRepository,
+			OrganizationChannel organizationChannel,
 			IRepository<EmployeeModel> employeesRepository,
 			ITokenController tokenController)
 		{
-			_orgRepository = orgRepository;
+			_organizationChannel = organizationChannel;
 			_employeesRepository = employeesRepository;
 			_tokenController = tokenController;
 		}
@@ -78,20 +79,42 @@ namespace Organizations.Microservice.Controllers
 		}
 
 		[HttpPost("add")]
-		public IActionResult Add([FromBody] EmployeeModel employee)
+		public async Task<IActionResult> Add([FromBody] EmployeeModel employee)
 		{
 			var error = CheckAccess(employee);
 			if (error != null) return error;
+
+			var reqeust = new InteractReef.Grpc.Organizations.GetById()
+			{
+				Id = employee.OrganizationId,
+			};
+
+			var exist = await _organizationChannel.OrganizationService.OrganizationExistsAsync(reqeust);
+			if (!exist.Result)
+			{
+				return NotFound();
+			}
 
 			_employeesRepository.Add(employee);
 			return Ok();
 		}
 
 		[HttpPost("update")]
-		public IActionResult Update([FromBody] EmployeeModel employee)
+		public async Task<IActionResult> Update([FromBody] EmployeeModel employee)
 		{
 			var error = CheckAccess(employee);
 			if (error != null) return error;
+
+			var reqeust = new InteractReef.Grpc.Organizations.GetById()
+			{
+				Id = employee.OrganizationId,
+			};
+
+			var exist = await _organizationChannel.OrganizationService.OrganizationExistsAsync(reqeust);
+			if (!exist.Result)
+			{
+				return NotFound();
+			}
 
 			_employeesRepository.Update(employee.Id, employee);
 			return Ok();

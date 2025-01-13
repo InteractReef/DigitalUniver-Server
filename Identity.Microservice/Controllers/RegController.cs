@@ -10,11 +10,13 @@ namespace Identity.Microservice.Controllers
 	[Route("identity/auth")]
 	public class RegController : Controller
 	{
-		private UserChannel _channel;
+		private UserChannel _userChannel;
+		private RoleChannel _roleChannel;
 
-		public RegController(UserChannel channel)
+		public RegController(UserChannel userChannel, RoleChannel roleChannel)
 		{
-			_channel = channel;
+			_userChannel = userChannel;
+			_roleChannel = roleChannel;
 		}
 
 		[HttpPost("reg")]
@@ -28,7 +30,7 @@ namespace Identity.Microservice.Controllers
 
 			try
 			{
-				await _channel.UserService.TryAddUserAsync(new AddUserRequest() { UserInfo = userInfo });
+				await _userChannel.UserService.TryAddUserAsync(userInfo);
 			}
 			catch(RpcException e)
 			{

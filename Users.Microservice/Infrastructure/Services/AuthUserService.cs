@@ -16,7 +16,7 @@ namespace Users.Microservice.Infrastructure.Services
 			_repository = repository;
 		}
 
-		public override async Task<GetUserResponce> GetUser(GetUserRequest request, ServerCallContext context)
+		public override async Task<UserInfoModel> GetUser(GetUserRequest request, ServerCallContext context)
 		{
 			var user = await _repository.GetAll().SingleOrDefaultAsync(x => x.Email == request.Email && x.Password == request.Password);
 			if (user == null)
@@ -29,19 +29,19 @@ namespace Users.Microservice.Infrastructure.Services
 				Password = request.Password,
 			};
 
-			return new GetUserResponce() { InfoModel = userInfo };
+			return userInfo;
 		}
 
-		public override async Task<Empty> TryAddUser(AddUserRequest request, ServerCallContext context)
+		public override async Task<Empty> TryAddUser(UserInfoModel request, ServerCallContext context)
 		{
-			var emailUsed = await _repository.GetAll().FirstOrDefaultAsync(x => x.Email == request.UserInfo.Email);
+			var emailUsed = await _repository.GetAll().FirstOrDefaultAsync(x => x.Email == request.Email);
 			if (emailUsed != null)
 				throw new RpcException(new Status(StatusCode.AlreadyExists, string.Empty));
 
 			var userModel = new UserModel()
 			{
-				Email = request.UserInfo.Email,
-				Password = request.UserInfo.Password,
+				Email = request.Email,
+				Password = request.Password,
 			};
 			_repository.Add(userModel);
 			return new Empty();
