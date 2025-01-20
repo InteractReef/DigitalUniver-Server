@@ -52,6 +52,21 @@ namespace InteractReef.API.Core
 			return builder;
 		}
 
+		public static IServiceCollection AddCorsPolicy(this IServiceCollection service)
+		{
+			service.AddCors(options =>
+			{
+				options.AddPolicy("AllowSpecificOrigin", policy =>
+				{
+					policy.WithOrigins("http://localhost:3000")
+						  .AllowAnyHeader()
+						  .AllowAnyMethod();
+				});
+			});
+
+			return service;
+		}
+
 		public static IServiceCollection AddSequrity(this IServiceCollection services, IConfiguration configuration)
 		{
 			services.AddJwtValidator(configuration);

@@ -1,5 +1,4 @@
-﻿using InteractReef.Packets;
-using InteractReef.Packets.Schedules;
+﻿using InteractReef.Packets.Schedules;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -36,14 +35,16 @@ namespace Schedules.Microservice.Infrastructure.Database
 			var intListComparer = new ValueComparer<List<int>>(
 			(c1, c2) => c1.SequenceEqual(c2),
 			c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())), 
-			c => c.ToList()); 
+			c => c.ToList());
 
-			modelBuilder.Entity<ScheduleItem>()
-				.Property(e => e.Subjects)
+			modelBuilder.Entity<ScheduleItem>(entity =>
+			{
+				entity.Property(e => e.Subjects)
 				.HasConversion(
-					v => string.Join(',', v), 
+					v => string.Join(',', v),
 					v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList())
 				.Metadata.SetValueComparer(intListComparer);
+			});
 
 			modelBuilder.Entity<SubjectItem>(entity =>
 			{

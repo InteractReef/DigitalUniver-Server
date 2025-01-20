@@ -1,5 +1,4 @@
 ﻿using InteractReef.Database.Core;
-using InteractReef.Packets;
 using InteractReef.Packets.Schedules;
 using Microsoft.EntityFrameworkCore;
 

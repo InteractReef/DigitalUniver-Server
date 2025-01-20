@@ -16,7 +16,6 @@ builder.Services.AddDatabase<SchedulesDbContext>(builder.Configuration, (config,
 	option.UseNpgsql(config.ConnectionString);
 });
 
-//builder.Services.AddRepository();
 builder.Services.AddScoped<IRepository<ScheduleItem>, ScheduleItemsRepository>();
 builder.Services.AddScoped<IRepository<Schedule>, SchedulesRepository>();
 builder.Services.AddScoped<IRepository<SubjectItem>, SubjectsRepository>();

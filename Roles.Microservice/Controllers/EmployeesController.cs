@@ -5,9 +5,13 @@ using InteractReef.Sequrity;
 using InteractReef.Grpc.Base;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Organizations.Microservice.Controllers
 {
+	[Authorize]
+	[ApiController]
+	[Route("[controller]")]
 	public class EmployeesController : Controller
 	{
 		private readonly OrganizationChannel _organizationChannel;

@@ -20,6 +20,7 @@ namespace InteractReef.Packets.Schedules
 	public class SubjectItem : IEntity
 	{
 		public int Id { get; set; }
+		public int OrgId { get; set; }
 		public required string Name { get; set; }
 	}
 }

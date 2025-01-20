@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Schedules.Microservice.Infrastructure.Database;
@@ -11,9 +12,11 @@ using Schedules.Microservice.Infrastructure.Database;
 namespace Schedules.Microservice.Migrations
 {
     [DbContext(typeof(SchedulesDbContext))]
-    partial class SchedulesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250117215543_Update-Models")]
+    partial class UpdateModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

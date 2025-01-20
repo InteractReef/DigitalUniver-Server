@@ -9,24 +9,24 @@ using System.Security.Claims;
 
 namespace Schedules.Microservice.Controllers
 {
-	[Route("schedules")]
+	[Route("subjects")]
 	[ApiController]
 	[Authorize]
-	public class ScheduleController : ControllerBase
+	public class SubjectController : Controller
 	{
 		private readonly RoleChannel _roleChannel;
 
-		private readonly IRepository<Schedule> _schedulesRepository;
+		private readonly IRepository<SubjectItem> _repository;
 
 		private readonly ITokenController _tokenController;
 
-		public ScheduleController(
+		public SubjectController(
 			RoleChannel roleChannel,
-			IRepository<Schedule> schedulesRepository,
+			IRepository<SubjectItem> repository,
 			ITokenController tokenController)
 		{
 			_roleChannel = roleChannel;
-			_schedulesRepository = schedulesRepository;
+			_repository = repository;
 			_tokenController = tokenController;
 		}
 
@@ -51,7 +51,7 @@ namespace Schedules.Microservice.Controllers
 			return null;
 		}
 
-		private async Task<IActionResult> CheckAccess(Schedule model)
+		private async Task<IActionResult> CheckAccess(SubjectItem model)
 		{
 			var validationResult = ValidateToken(out var userId);
 			if (validationResult != null) return validationResult;
@@ -61,7 +61,7 @@ namespace Schedules.Microservice.Controllers
 			request.Params.Add(model.OrgId);
 
 			var isEmployee = await _roleChannel.RoleService.IsEmployeeAsync(request);
-			
+
 			if (!isEmployee.Result) return Unauthorized("No access");
 
 			return null;
@@ -70,41 +70,41 @@ namespace Schedules.Microservice.Controllers
 		[HttpGet]
 		public IActionResult Get([FromQuery] int id)
 		{
-			var schedule = _schedulesRepository.GetById(id);
-			return schedule != null ? Ok(schedule) : NotFound();
+			var item = _repository.GetById(id);
+			return item != null ? Ok(item) : NotFound();
 		}
 
 		[HttpPost("add")]
-		public async Task<IActionResult> Add([FromBody] Schedule schedule)
+		public async Task<IActionResult> Add([FromBody] SubjectItem model)
 		{
-			var errors = await CheckAccess(schedule);
+			var errors = await CheckAccess(model);
 			if (errors != null) return errors;
 
-			_schedulesRepository.Add(schedule);
+			_repository.Add(model);
 			return Ok();
 		}
 
 		[HttpPost("update")]
-		public async Task<IActionResult> Update([FromBody] Schedule schedule)
+		public async Task<IActionResult> Update([FromBody] SubjectItem model)
 		{
-			var errors = await CheckAccess(schedule);
+			var errors = await CheckAccess(model);
 			if (errors != null) return errors;
 
-			_schedulesRepository.Update(schedule.Id, schedule);
+			_repository.Update(model.Id, model);
 			return Ok();
 		}
 
 		[HttpPost("delete")]
 		public async Task<IActionResult> Delete([FromQuery] int id)
 		{
-			var schedule = _schedulesRepository.GetById(id);
-			if(schedule == null)
+			var schedule = _repository.GetById(id);
+			if (schedule == null)
 				return NotFound();
 
 			var errors = await CheckAccess(schedule);
 			if (errors != null) return errors;
 
-			_schedulesRepository.Delete(schedule);
+			_repository.Delete(schedule);
 			return Ok();
 		}
 	}
